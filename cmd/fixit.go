@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+Copyright © 2019 Scott Crawford scottcrawford03@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/scottcrawford03/felix/internal/service"
+	"github.com/scottcrawford03/felix/internal/builder"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var fixitCmd = &cobra.Command{
 	Short: "inits a new golang project",
 	Long:  `fixit inits a new golang project with a file structure.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := service.Init(); err != nil {
+		if err := builder.Init(); err != nil {
 			fmt.Printf("Something went wrong: %s", err.Error())
 
 			return

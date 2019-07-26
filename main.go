@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+Copyright © 2019 Scott Crawford scottcrawford03@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@ limitations under the License.
 */
 package main
 
-import "github.com/scottcrawford03/felix/cmd"
+import (
+	"github.com/scottcrawford03/felix/cmd"
+)
 
 func main() {
-  cmd.Execute()
+	cmd.Execute()
 }
