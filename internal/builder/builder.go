@@ -2,9 +2,12 @@ package builder
 
 import (
 	"archive/zip"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
+
+	"github.com/gobuffalo/packr"
 )
 
 const (
@@ -38,7 +41,13 @@ func Init() error {
 		return err
 	}
 
-	err = writeToLocal(tmpDir, rootDir, reader)
+	box := packr.NewBox(fmt.Sprintf("%s/%s", tmpDir, rootDir))
+	builder := &Builder{
+		Box:     box,
+		rootDir: rootDir,
+	}
+
+	err = builder.writeToLocal(reader)
 	if err != nil {
 		return err
 	}

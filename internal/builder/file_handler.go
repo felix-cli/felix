@@ -8,8 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/gobuffalo/packr"
 )
 
 func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
@@ -47,27 +45,23 @@ func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
 	return rootDir, nil
 }
 
-func writeToLocal(tmpDir string, rootDir string, reader *zip.ReadCloser) error {
-	box := packr.NewBox(fmt.Sprintf("%s/%s", tmpDir, rootDir))
-	builder := &Builder{
-		Box: box,
-	}
-
+func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
 	for _, f := range reader.Reader.File {
 		fpath := f.Name
 		if f.FileInfo().IsDir() {
-			if fpath == rootDir {
+			if fpath == b.rootDir {
 				continue
 			}
 
-			truePath := strings.Replace(fpath, rootDir, "", 1)
+			truePath := strings.Replace(fpath, b.rootDir, "", 1)
 			os.MkdirAll(truePath, f.Mode())
 
 			continue
 		}
 
-		truePath := strings.Replace(fpath, rootDir, "", 1)
-		err := builder.buildFile(truePath)
+		truePath := strings.Replace(fpath, b.rootDir, "", 1)
+
+		err := b.writeFile(truePath)
 		if err != nil {
 			return err
 		}
@@ -76,13 +70,18 @@ func writeToLocal(tmpDir string, rootDir string, reader *zip.ReadCloser) error {
 	return nil
 }
 
-func (b *Builder) buildFile(fileName string) error {
-	file, err := b.Box.Find(fileName)
+func (b *Builder) writeFile(fileName string) error {
+	file, err := b.Box.FindString(fileName)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(fileName, file, 0644)
+	parsedFile, err := b.parseTemplate(file)
+	if err != nil {
+		fmt.Println("err parsing: ", err)
+	}
+
+	err = ioutil.WriteFile(fileName, parsedFile, 0644)
 	if err != nil {
 		return err
 	}
