@@ -48,8 +48,8 @@ func (b *Builder) updateTemplateFromFelixYaml() {
 	for k, v := range m {
 		fmt.Printf(`%s [%s]: `, k, v)
 		text, _ := reader.ReadString('\n')
+		text = strings.TrimSuffix(text, "\n")
 		if text != "" {
-			text = strings.TrimSuffix(text, "\n")
 			text = strings.Replace(text, " ", "_", -1)
 
 			m[k] = strings.TrimSuffix(text, "\n")
