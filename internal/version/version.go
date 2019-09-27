@@ -1,7 +1,7 @@
 package version
 
 const (
-	currentVersion = "0.1.1"
+	currentVersion = "0.1.2"
 )
 
 // CurrentVersion returns the most recent stable version of felix
