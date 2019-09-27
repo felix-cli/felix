@@ -1,7 +1,11 @@
 package builder
 
 import (
+	"bufio"
 	"bytes"
+	"fmt"
+	"os"
+	"strings"
 	"text/template"
 
 	"gopkg.in/yaml.v2"
@@ -20,7 +24,7 @@ func (b *Builder) parseTemplate(file string) ([]byte, error) {
 	}
 
 	var newFile bytes.Buffer
-	err = tmpl.Execute(&newFile, b.template)
+	err = tmpl.Execute(&newFile, b.felixYaml)
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +42,18 @@ func (b *Builder) updateTemplateFromFelixYaml() {
 	err = yaml.Unmarshal([]byte(felixYaml), &m)
 	if err != nil {
 		return
+	}
+
+	reader := bufio.NewReader(os.Stdin)
+	for k, v := range m {
+		fmt.Printf(`%s [%s]: `, k, v)
+		text, _ := reader.ReadString('\n')
+		if text != "" {
+			text = strings.TrimSuffix(text, "\n")
+			text = strings.Replace(text, " ", "_", -1)
+
+			m[k] = strings.TrimSuffix(text, "\n")
+		}
 	}
 
 	b.felixYaml = m
