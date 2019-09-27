@@ -61,6 +61,10 @@ func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
 
 		truePath := strings.Replace(fpath, b.rootDir, "", 1)
 
+		if len(b.felixYaml) == 0 {
+			b.updateTemplateFromFelixYaml()
+		}
+
 		err := b.writeFile(truePath)
 		if err != nil {
 			return err

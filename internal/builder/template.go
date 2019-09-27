@@ -3,6 +3,8 @@ package builder
 import (
 	"bytes"
 	"text/template"
+
+	"gopkg.in/yaml.v2"
 )
 
 // Template is the default struct for defining template variables
@@ -24,4 +26,21 @@ func (b *Builder) parseTemplate(file string) ([]byte, error) {
 	}
 
 	return newFile.Bytes(), nil
+}
+
+func (b *Builder) updateTemplateFromFelixYaml() {
+	felixYaml, err := b.Box.Find("felix.yaml")
+	if err != nil {
+		return
+	}
+
+	m := make(map[interface{}]interface{})
+	err = yaml.Unmarshal([]byte(felixYaml), &m)
+	if err != nil {
+		return
+	}
+
+	b.felixYaml = m
+
+	return
 }
