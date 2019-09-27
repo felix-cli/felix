@@ -12,18 +12,13 @@ type Template struct {
 }
 
 func (b *Builder) parseTemplate(file string) ([]byte, error) {
-	tmp := Template{
-		Org:  "scottcrawford03",
-		Proj: "test",
-	}
-
 	tmpl, err := template.New("felix").Parse(file)
 	if err != nil {
 		return nil, err
 	}
 
 	var newFile bytes.Buffer
-	err = tmpl.Execute(&newFile, tmp)
+	err = tmpl.Execute(&newFile, b.template)
 	if err != nil {
 		return nil, err
 	}

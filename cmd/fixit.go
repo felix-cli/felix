@@ -28,7 +28,22 @@ var fixitCmd = &cobra.Command{
 	Short: "inits a new golang project",
 	Long:  `fixit inits a new golang project with a file structure.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := builder.Init(); err != nil {
+		org, _ := cmd.Flags().GetString("org")
+		if org == "" {
+			org = "update"
+		}
+
+		proj, _ := cmd.Flags().GetString("proj")
+		if proj == "" {
+			proj = "update_me"
+		}
+
+		tmp := builder.Template{
+			Org:  org,
+			Proj: proj,
+		}
+
+		if err := builder.Init(&tmp); err != nil {
 			fmt.Printf("Something went wrong: %s", err.Error())
 
 			return
@@ -39,6 +54,9 @@ var fixitCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(fixitCmd)
+	fixitCmd.Flags().StringP("org", "o", "", "Set your org name")
+	fixitCmd.Flags().StringP("proj", "p", "", "Set your project name")
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

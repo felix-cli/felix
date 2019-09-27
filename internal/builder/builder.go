@@ -15,7 +15,7 @@ const (
 )
 
 // Init fetches the default template repo and installs it to a users computer
-func Init() error {
+func Init(template *Template) error {
 	tmpDir, err := ioutil.TempDir("", "felix")
 	if err != nil {
 		return err
@@ -43,8 +43,9 @@ func Init() error {
 
 	box := packr.NewBox(fmt.Sprintf("%s/%s", tmpDir, rootDir))
 	builder := &Builder{
-		Box:     box,
-		rootDir: rootDir,
+		Box:      box,
+		rootDir:  rootDir,
+		template: template,
 	}
 
 	err = builder.writeToLocal(reader)
