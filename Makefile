@@ -5,3 +5,4 @@ build: go-modules-tidy
 .PHONY: go-modules-tidy
 go-modules-tidy:
 	go mod tidy
+	go mod vendor
