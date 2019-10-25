@@ -1,3 +1,5 @@
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
 # github.com/gobuffalo/envy v1.7.0
@@ -30,6 +32,8 @@ github.com/mitchellh/go-homedir
 github.com/mitchellh/mapstructure
 # github.com/pelletier/go-toml v1.4.0
 github.com/pelletier/go-toml
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
 # github.com/rogpeppe/go-internal v1.3.0
 github.com/rogpeppe/go-internal/modfile
 github.com/rogpeppe/go-internal/module
@@ -47,6 +51,9 @@ github.com/spf13/jwalterweatherman
 github.com/spf13/pflag
 # github.com/spf13/viper v1.4.0
 github.com/spf13/viper
+# github.com/stretchr/testify v1.3.0
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/require
 # golang.org/x/sys v0.0.0-20190726091711-fc99dfbffb4e
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2

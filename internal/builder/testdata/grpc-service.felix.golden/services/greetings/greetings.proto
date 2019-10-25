@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package greetings;
+
+import "google/api/annotations.proto";
+
+message Greeting {
+  string msg = 1;
+}
+
+message GreetReq{
+  Greeting request = 1;
+}
+
+message GreetResp{
+  Greeting response = 1;
+}
+
+service GreeterService {
+  rpc Greet(GreetReq) returns (GreetResp) {
+    option (google.api.http) = {
+      get: "/hello_world"
+    };
+  }
+}
