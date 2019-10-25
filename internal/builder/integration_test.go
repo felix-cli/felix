@@ -1,4 +1,3 @@
-// +build integration
 package builder_test
 
 import (
@@ -44,6 +43,10 @@ func CompareDir(t *testing.T, expDir, testDir string) {
 }
 
 func Test(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
+
 	tests := []struct {
 		name     string
 		expected string
