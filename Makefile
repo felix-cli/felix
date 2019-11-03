@@ -1,16 +1,17 @@
-.PHONY: build
+.PHONY: build test test-short vendor
+
 build: go-modules-tidy
 	go build -o bin/felix cmd/felix/main.go
 
-.PHONY: go-modules-tidy
-go-modules-tidy:
+vendor:
 	go mod tidy
 	go mod vendor
 
-.PHONY: test
 test:
 	go test -count=1 ./...
 
-.PHONY: test-short
 test-short:
 	go test -short -count=1 ./...
+
+test-update:
+	go test ./... -update
