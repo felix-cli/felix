@@ -1,6 +1,7 @@
 package builder_test
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/scottcrawford03/felix/internal/builder"
 )
+
+var update = flag.Bool("update", false, "update .golden files")
 
 func CompareDir(t *testing.T, expDir, testDir string) {
 	t.Helper()
@@ -68,10 +71,13 @@ func Test(t *testing.T) {
 			outDir, err := ioutil.TempDir("", "felix")
 			require.NoError(t, err)
 			defer os.RemoveAll(outDir)
-			fmt.Println(outDir)
 
-			os.Chdir(outDir)
-			defer os.Chdir(curDir)
+			err = os.Chdir(outDir)
+			require.NoError(t, err)
+			defer func() {
+				err = os.Chdir(curDir)
+				require.NoError(t, err)
+			}()
 
 			tmp := builder.Template{
 				Org:  "update",
@@ -82,7 +88,23 @@ func Test(t *testing.T) {
 			require.NoError(t, err)
 
 			expDir := fmt.Sprintf("%s/testdata/%s.golden", curDir, tc.expected)
-			CompareDir(t, expDir, outDir)
+
+			if *update {
+				tempDir := fmt.Sprintf("%s.temp", expDir)
+				err = os.Rename(expDir, tempDir)
+				require.NoError(t, err)
+
+				err = os.Rename(outDir, expDir)
+				if err != nil {
+					err = os.Rename(tempDir, expDir)
+					require.NoError(t, err)
+				}
+
+				err = os.RemoveAll(tempDir)
+				require.NoError(t, err)
+			} else {
+				CompareDir(t, expDir, outDir)
+			}
 		})
 	}
 }
