@@ -3,6 +3,7 @@ module github.com/felix-cli/felix
 go 1.13
 
 require (
+	github.com/alecthomas/kingpin v2.2.6+incompatible
 	github.com/gobuffalo/packr v1.30.1
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0

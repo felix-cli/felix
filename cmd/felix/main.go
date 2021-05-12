@@ -16,9 +16,47 @@ limitations under the License.
 package main
 
 import (
-	"github.com/felix-cli/felix/cmd"
+	"fmt"
+	"os"
+
+	"github.com/alecthomas/kingpin"
+
+	"github.com/felix-cli/felix/internal/builder"
+)
+
+var (
+	currentVersion = "1.0.0-beta"
+
+	app = kingpin.New("felix", "Golang template tool")
+
+	versionCommand = app.Command("version", "list the latest version")
+	fixitCommand   = app.Command("fixit", "list the latest version")
+	org            = fixitCommand.Flag("org", "Set your org name").Short('o').String()
+	proj           = fixitCommand.Flag("project", "Set your project name").Short('p').String()
 )
 
 func main() {
-	cmd.Execute()
+	versionCommand.Action(getVersion)
+	fixitCommand.Action(fixit)
+	kingpin.MustParse(app.Parse(os.Args[1:]))
+}
+
+func getVersion(c *kingpin.ParseContext) error {
+	fmt.Println(currentVersion)
+	return nil
+}
+
+func fixit(c *kingpin.ParseContext) error {
+	tmp := builder.Template{
+		Org:  *org,
+		Proj: *proj,
+	}
+
+	if err := builder.Init(&tmp); err != nil {
+		fmt.Printf("Something went wrong: %s", err.Error())
+
+		return err
+	}
+	fmt.Println("All done!")
+	return nil
 }
