@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	defaultTemplateURL = "http://github.com/scottcrawford03/grpc-service.felix/archive/master.zip"
+	defaultTemplateURL = "http://github.com/felix-cli/grpc-service.felix/archive/master.zip"
 )
 
 // Init fetches the default template repo and installs it to a users computer

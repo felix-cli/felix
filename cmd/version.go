@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/scottcrawford03/felix/internal/version"
+	"github.com/felix-cli/felix/internal/version"
 	"github.com/spf13/cobra"
 )
 

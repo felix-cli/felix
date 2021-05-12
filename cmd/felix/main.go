@@ -16,7 +16,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/scottcrawford03/felix/cmd"
+	"github.com/felix-cli/felix/cmd"
 )
 
 func main() {

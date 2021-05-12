@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/scottcrawford03/felix/internal/builder"
+	"github.com/felix-cli/felix/internal/builder"
 	"github.com/spf13/cobra"
 )
 

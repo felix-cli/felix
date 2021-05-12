@@ -1,4 +1,4 @@
-module github.com/scottcrawford03/felix
+module github.com/felix-cli/felix
 
 go 1.13
 

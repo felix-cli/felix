@@ -2,10 +2,10 @@
 Felix is a CLI to quickly create service based on templates. For now it uses a default template but soon it will be able to accept all.
 
 ## installing
-`go get -u github.com/scottcrawford03/felix/...`
+`go get -u github.com/felix-cli/felix/...`
 
 ## templates
-* `https://github.com/scottcrawford03/grpc-service.felix`
+* `https://github.com/felix-cli/grpc-service.felix`
 
 # Quick Start
 
@@ -40,7 +40,7 @@ go get -u github.com/golang/protobuf/protoc-gen-go
 
 ## Install Felix
 
-`go get -u github.com/scottcrawford03/felix/...`
+`go get -u github.com/felix-cli/felix/...`
 
 ## Example usage
 
@@ -74,12 +74,12 @@ Run main.go
 
 Output:
 ```
-. . . 
+. . .
 {"level":"info","ts":1572414251.498708,"caller":"felix/main.go:64","msg":"Starting gRPC server on port 8080"}
 {"level":"info","ts":1572414251.4988759,"caller":"felix/main.go:74","msg":"Starting http server on port 8000"}
 ```
 
-In another terminal window: 
+In another terminal window:
 
 `curl localhost:8000/hello_world`
 
