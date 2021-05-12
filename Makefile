@@ -1,6 +1,6 @@
 .PHONY: build test test-short vendor
 
-build: go-modules-tidy
+build: vendor
 	go build -o bin/felix cmd/felix/main.go
 
 vendor:
