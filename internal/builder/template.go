@@ -15,6 +15,7 @@ import (
 type Template struct {
 	Org  string
 	Proj string
+	Name string
 }
 
 func (b *Builder) parseTemplate(file string) ([]byte, error) {

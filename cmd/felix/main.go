@@ -31,13 +31,14 @@ var (
 
 	versionCommand = app.Command("version", "list the latest version")
 	initCommand    = app.Command("init", "creates new service in current directory")
-	org            = initCommand.Flag("org", "Set your org name").Short('o').String()
-	proj           = initCommand.Flag("project", "Set your project name").Short('p').String()
+	newCommand     = app.Command("new", "creates new service in new directory")
+	name           = newCommand.Arg("name", "the name of the new service and directory you want to create").Required().String()
 )
 
 func main() {
 	versionCommand.Action(getVersion)
 	initCommand.Action(felixInit)
+	newCommand.Action(felixNew)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 }
 
@@ -47,9 +48,20 @@ func getVersion(c *kingpin.ParseContext) error {
 }
 
 func felixInit(c *kingpin.ParseContext) error {
+	tmp := builder.Template{}
+
+	if err := builder.Init(&tmp); err != nil {
+		fmt.Printf("Something went wrong: %s", err.Error())
+
+		return err
+	}
+	fmt.Println("All done!")
+	return nil
+}
+
+func felixNew(c *kingpin.ParseContext) error {
 	tmp := builder.Template{
-		Org:  *org,
-		Proj: *proj,
+		Name: *name,
 	}
 
 	if err := builder.Init(&tmp); err != nil {

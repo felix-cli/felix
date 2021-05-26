@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -46,6 +47,12 @@ func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
 }
 
 func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
+	var destinationDir string
+	if b.template.Name != "" {
+		os.MkdirAll(b.template.Name, fs.FileMode(0755))
+		destinationDir = fmt.Sprintf("%s/", b.template.Name)
+	}
+
 	for _, f := range reader.Reader.File {
 		fpath := f.Name
 		if f.FileInfo().IsDir() {
@@ -53,7 +60,7 @@ func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
 				continue
 			}
 
-			truePath := strings.Replace(fpath, b.rootDir, "", 1)
+			truePath := strings.Replace(fpath, b.rootDir, destinationDir, 1)
 			os.MkdirAll(truePath, f.Mode())
 
 			continue
@@ -65,7 +72,7 @@ func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
 			b.updateTemplateFromFelixYaml()
 		}
 
-		err := b.writeFile(truePath)
+		err := b.writeFile(destinationDir, truePath)
 		if err != nil {
 			return err
 		}
@@ -74,7 +81,7 @@ func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
 	return nil
 }
 
-func (b *Builder) writeFile(fileName string) error {
+func (b *Builder) writeFile(destinationDir, fileName string) error {
 	file, err := b.Box.FindString(fileName)
 	if err != nil {
 		return err
@@ -85,7 +92,8 @@ func (b *Builder) writeFile(fileName string) error {
 		fmt.Println("err parsing: ", err)
 	}
 
-	err = ioutil.WriteFile(fileName, parsedFile, 0644)
+	newFile := filepath.Join(destinationDir, fileName)
+	err = ioutil.WriteFile(newFile, parsedFile, 0644)
 	if err != nil {
 		return err
 	}
