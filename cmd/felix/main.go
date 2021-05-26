@@ -30,14 +30,14 @@ var (
 	app = kingpin.New("felix", "Golang template tool")
 
 	versionCommand = app.Command("version", "list the latest version")
-	fixitCommand   = app.Command("fixit", "list the latest version")
-	org            = fixitCommand.Flag("org", "Set your org name").Short('o').String()
-	proj           = fixitCommand.Flag("project", "Set your project name").Short('p').String()
+	initCommand    = app.Command("init", "creates new service in current directory")
+	org            = initCommand.Flag("org", "Set your org name").Short('o').String()
+	proj           = initCommand.Flag("project", "Set your project name").Short('p').String()
 )
 
 func main() {
 	versionCommand.Action(getVersion)
-	fixitCommand.Action(fixit)
+	initCommand.Action(felixInit)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 }
 
@@ -46,7 +46,7 @@ func getVersion(c *kingpin.ParseContext) error {
 	return nil
 }
 
-func fixit(c *kingpin.ParseContext) error {
+func felixInit(c *kingpin.ParseContext) error {
 	tmp := builder.Template{
 		Org:  *org,
 		Proj: *proj,
