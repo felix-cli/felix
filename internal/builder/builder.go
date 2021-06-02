@@ -27,7 +27,12 @@ func Init(template *Template) error {
 		return err
 	}
 
-	cmd := exec.Command("curl", "-L", defaultTemplateURL, "-o", file.Name())
+	templateURL := template.URL
+	if templateURL == "" {
+		templateURL = defaultTemplateURL
+	}
+
+	cmd := exec.Command("curl", "-L", templateURL, "-o", file.Name())
 	cmd.Run()
 
 	reader, err := zip.OpenReader(file.Name())

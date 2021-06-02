@@ -16,6 +16,7 @@ type Template struct {
 	Org  string
 	Proj string
 	Name string
+	URL  string
 }
 
 func (b *Builder) parseTemplate(file string) ([]byte, error) {

@@ -20,8 +20,6 @@ func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
 			return "", err
 		}
 
-		defer zipped.Close()
-
 		// get the individual file name and extract the current directory
 		path := filepath.Join(tmpDir, f.Name)
 		if f.FileInfo().IsDir() {
@@ -35,12 +33,13 @@ func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
 				return "", err
 			}
 
-			defer writer.Close()
-
 			if _, err = io.Copy(writer, zipped); err != nil {
 				return "", err
 			}
+			writer.Close()
 		}
+
+		zipped.Close()
 	}
 
 	return rootDir, nil

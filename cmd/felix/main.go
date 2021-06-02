@@ -33,6 +33,8 @@ var (
 	initCommand    = app.Command("init", "creates new service in current directory")
 	newCommand     = app.Command("new", "creates new service in new directory")
 	name           = newCommand.Arg("name", "the name of the new service and directory you want to create").Required().String()
+
+	templateURL = app.Flag("template", "github url for the template").Short('t').String()
 )
 
 func main() {
@@ -48,7 +50,9 @@ func getVersion(c *kingpin.ParseContext) error {
 }
 
 func felixInit(c *kingpin.ParseContext) error {
-	tmp := builder.Template{}
+	tmp := builder.Template{
+		URL: *templateURL,
+	}
 
 	if err := builder.Init(&tmp); err != nil {
 		fmt.Printf("Something went wrong: %s", err.Error())
@@ -62,6 +66,7 @@ func felixInit(c *kingpin.ParseContext) error {
 func felixNew(c *kingpin.ParseContext) error {
 	tmp := builder.Template{
 		Name: *name,
+		URL:  *templateURL,
 	}
 
 	if err := builder.Init(&tmp); err != nil {
