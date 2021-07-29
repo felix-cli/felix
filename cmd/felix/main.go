@@ -17,41 +17,52 @@ package main
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/alecthomas/kingpin"
-
+	"github.com/alecthomas/kong"
 	"github.com/felix-cli/felix/internal/builder"
 )
 
+type Context struct {
+	TemplateURL string
+}
+
+type VersionCmd struct{}
+
+type InitCmd struct{}
+
+type NewCmd struct {
+	Name string `arg required help:"the name of the new service and directory you want to create"`
+}
+
+var cli struct {
+	Template string `short:"t" help:"github url for the template"`
+
+	Version VersionCmd `cmd help:"list the latest version"`
+
+	Init InitCmd `cmd help:"creates new service in current directory"`
+
+	New NewCmd `cmd help:"creates new service in new directory"`
+}
+
 var (
 	currentVersion = "1.0.0-beta"
-
-	app = kingpin.New("felix", "Golang template tool")
-
-	versionCommand = app.Command("version", "list the latest version")
-	initCommand    = app.Command("init", "creates new service in current directory")
-	newCommand     = app.Command("new", "creates new service in new directory")
-	name           = newCommand.Arg("name", "the name of the new service and directory you want to create").Required().String()
-
-	templateURL = app.Flag("template", "github url for the template").Short('t').String()
 )
 
 func main() {
-	versionCommand.Action(getVersion)
-	initCommand.Action(felixInit)
-	newCommand.Action(felixNew)
-	kingpin.MustParse(app.Parse(os.Args[1:]))
+	ctx := kong.Parse(&cli)
+	// Call the Run() method of the selected parsed command.
+	err := ctx.Run(&Context{TemplateURL: cli.Template})
+	ctx.FatalIfErrorf(err)
 }
 
-func getVersion(c *kingpin.ParseContext) error {
+func (v *VersionCmd) Run() error {
 	fmt.Println(currentVersion)
 	return nil
 }
 
-func felixInit(c *kingpin.ParseContext) error {
+func (i *InitCmd) Run(ctx *Context) error {
 	tmp := builder.Template{
-		URL: *templateURL,
+		URL: ctx.TemplateURL,
 	}
 
 	if err := builder.Init(&tmp); err != nil {
@@ -63,10 +74,10 @@ func felixInit(c *kingpin.ParseContext) error {
 	return nil
 }
 
-func felixNew(c *kingpin.ParseContext) error {
+func (n *NewCmd) Run(ctx *Context) error {
 	tmp := builder.Template{
-		Name: *name,
-		URL:  *templateURL,
+		Name: n.Name,
+		URL:  ctx.TemplateURL,
 	}
 
 	if err := builder.Init(&tmp); err != nil {
