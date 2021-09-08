@@ -1,9 +1,7 @@
 package builder
 
 import (
-	"archive/zip"
 	"fmt"
-	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -11,91 +9,92 @@ import (
 	"strings"
 )
 
-func copyToTempDir(tmpDir string, reader *zip.ReadCloser) (string, error) {
-	var rootDir string
-	for _, f := range reader.Reader.File {
-
-		zipped, err := f.Open()
-		if err != nil {
-			return "", err
-		}
-
-		// get the individual file name and extract the current directory
-		path := filepath.Join(tmpDir, f.Name)
-		if f.FileInfo().IsDir() {
-			if len(strings.Split(f.Name, string(os.PathSeparator))) == 2 {
-				rootDir = f.Name
-			}
-			os.MkdirAll(path, f.Mode())
-		} else {
-			writer, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, f.Mode())
-			if err != nil {
-				return "", err
-			}
-
-			if _, err = io.Copy(writer, zipped); err != nil {
-				return "", err
-			}
-			writer.Close()
-		}
-
-		zipped.Close()
-	}
-
-	return rootDir, nil
-}
-
-func (b *Builder) writeToLocal(reader *zip.ReadCloser) error {
+func (b *Builder) writeToLocal() error {
 	var destinationDir string
 	if b.template.Name != "" {
 		os.MkdirAll(b.template.Name, fs.FileMode(0755))
 		destinationDir = fmt.Sprintf("%s/", b.template.Name)
 	}
 
-	for _, f := range reader.Reader.File {
-		fpath := f.Name
-		if f.FileInfo().IsDir() {
-			if fpath == b.rootDir {
-				continue
-			}
-
-			truePath := strings.Replace(fpath, b.rootDir, destinationDir, 1)
-			os.MkdirAll(truePath, f.Mode())
-
-			continue
+	fmt.Println("read items from tmp dir")
+	filepath.WalkDir(b.rootDir, func(path string, d fs.DirEntry, _ error) error {
+		if path == b.rootDir {
+			return nil
 		}
 
-		truePath := strings.Replace(fpath, b.rootDir, "", 1)
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			return err
+		}
+
+		if fileInfo.Name() == ".git" || strings.Contains(path, ".git/") {
+			return nil
+		}
+
+		if fileInfo.IsDir() {
+			truePath := strings.Replace(path, fmt.Sprintf("%s/", b.rootDir), destinationDir, 1)
+			fmt.Println("what is this? ", truePath)
+			err := os.MkdirAll(truePath, fileInfo.Mode())
+			if err != nil {
+				fmt.Println("error making dir: ", err.Error())
+				return err
+			}
+
+			return nil
+		}
+
+		truePath := strings.ReplaceAll(path, fmt.Sprintf("%s/", b.rootDir), destinationDir)
 
 		if len(b.felixYaml) == 0 {
 			b.updateTemplateFromFelixYaml()
 		}
 
-		err := b.writeFile(destinationDir, truePath)
-		if err != nil {
-			return err
-		}
-	}
+		b.writeFile(path, truePath)
+
+		return nil
+	})
 
 	return nil
 }
 
-func (b *Builder) writeFile(destinationDir, fileName string) error {
-	file, err := b.Box.FindString(fileName)
+func (b *Builder) writeFile(tmpPath, newPath string) error {
+	file, err := ioutil.ReadFile(tmpPath)
 	if err != nil {
+		fmt.Println("err reading file ", tmpPath)
 		return err
 	}
 
-	parsedFile, err := b.parseTemplate(file)
+	parsedFile, err := b.parseTemplate(string(file))
 	if err != nil {
 		fmt.Println("err parsing: ", err)
 	}
 
-	newFile := filepath.Join(destinationDir, fileName)
-	err = ioutil.WriteFile(newFile, parsedFile, 0644)
+	fmt.Println("writing file to path", newPath)
+	err = ioutil.WriteFile(newPath, parsedFile, 0644)
 	if err != nil {
+		fmt.Println("err writing file: ", err.Error())
 		return err
 	}
 
 	return nil
 }
+
+// func (b *Builder) writeFile(destinationDir, fileName string) error {
+// 	file, err := b.Box.FindString(fileName)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// parsedFile, err := b.parseTemplate(file)
+// if err != nil {
+// 	fmt.Println("err parsing: ", err)
+// }
+
+// newFile := filepath.Join(destinationDir, fileName)
+// err = ioutil.WriteFile(newFile, parsedFile, 0644)
+// if err != nil {
+// 	return err
+// }
+
+// 	return nil
+// }
