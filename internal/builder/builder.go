@@ -1,9 +1,7 @@
 package builder
 
 import (
-	"io/ioutil"
 	"os"
-	"os/exec"
 
 	"github.com/gobuffalo/packr"
 )
@@ -14,27 +12,21 @@ const (
 
 // Init fetches the default template repo and installs it to a users computer
 func Init(template *Template) error {
-	tmpDir, err := ioutil.TempDir("", "felix")
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(tmpDir)
-
 	templateURL := template.URL
 	if templateURL == "" {
 		templateURL = defaultTemplateURL
 	}
 
-	cmd := exec.Command("git", "clone", templateURL, tmpDir)
-	err = cmd.Run()
+	srcDir, err := CurateSource(templateURL)
 	if err != nil {
 		return err
 	}
+	defer os.RemoveAll(srcDir)
 
-	box := packr.NewBox(tmpDir)
+	box := packr.NewBox(srcDir)
 	builder := &Builder{
 		Box:      box,
-		rootDir:  tmpDir,
+		rootDir:  srcDir,
 		template: template,
 	}
 
