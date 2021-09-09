@@ -25,7 +25,7 @@ func Init(template *Template) error {
 		templateURL = defaultTemplateURL
 	}
 
-	cmd := exec.Command("git", "clone", defaultTemplateURL, tmpDir)
+	cmd := exec.Command("git", "clone", templateURL, tmpDir)
 	err = cmd.Run()
 	if err != nil {
 		return err
