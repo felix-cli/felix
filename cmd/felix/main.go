@@ -45,7 +45,7 @@ var cli struct {
 }
 
 var (
-	currentVersion = "1.0.0-beta"
+	Version = "DEV"
 )
 
 func main() {
@@ -56,7 +56,7 @@ func main() {
 }
 
 func (v *VersionCmd) Run() error {
-	fmt.Println(currentVersion)
+	fmt.Println(Version)
 	return nil
 }
 
