@@ -31,17 +31,17 @@ type VersionCmd struct{}
 type InitCmd struct{}
 
 type NewCmd struct {
-	Name string `arg required help:"the name of the new service and directory you want to create"`
+	Name string `arg:"" required:"" help:"the name of the new service and directory you want to create"`
 }
 
 var cli struct {
 	Template string `short:"t" help:"github url for the template"`
 
-	Version VersionCmd `cmd help:"list the latest version"`
+	Version VersionCmd `cmd:"" help:"list the latest version"`
 
-	Init InitCmd `cmd help:"creates new service in current directory"`
+	Init InitCmd `cmd:"" help:"creates new service in current directory"`
 
-	New NewCmd `cmd help:"creates new service in new directory"`
+	New NewCmd `cmd:"" help:"creates new service in new directory"`
 }
 
 var (
