@@ -14,7 +14,7 @@ build: vendor
 	go build -ldflags=${go_ldflags} -o bin/felix cmd/felix/main.go
 
 version:
-	echo ${version}
+	@echo ${version}
 
 vendor:
 	go mod tidy
