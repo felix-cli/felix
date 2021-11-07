@@ -1,4 +1,4 @@
-.PHONY: build test test-short test-update vendor version
+.PHONY: build install test test-short test-update vendor version
 
 latest_tag := $(shell git describe --tags --abbrev=0)
 version := ${latest_tag}
@@ -12,6 +12,9 @@ go_ldflags := "-X main.Version=${version}"
 
 build: vendor
 	go build -ldflags=${go_ldflags} -o bin/felix cmd/felix/main.go
+
+install: vendor
+	go install -ldflags=${go_ldflags} ./...
 
 test:
 	go test -count=1 ./...
