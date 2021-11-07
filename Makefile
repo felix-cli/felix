@@ -1,4 +1,4 @@
-.PHONY: build test test-short vendor
+.PHONY: build test test-short test-update vendor version
 
 latest_tag := $(shell git describe --tags --abbrev=0)
 version := ${latest_tag}
