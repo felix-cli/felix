@@ -13,13 +13,6 @@ go_ldflags := "-X main.Version=${version}"
 build: vendor
 	go build -ldflags=${go_ldflags} -o bin/felix cmd/felix/main.go
 
-version:
-	@echo ${version}
-
-vendor:
-	go mod tidy
-	go mod vendor
-
 test:
 	go test -count=1 ./...
 
@@ -28,3 +21,10 @@ test-short:
 
 test-update:
 	go test ./... -update
+
+version:
+	@echo ${version}
+
+vendor:
+	go mod tidy
+	go mod vendor
