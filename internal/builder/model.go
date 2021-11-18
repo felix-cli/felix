@@ -1,6 +1,8 @@
 package builder
 
-import "github.com/gobuffalo/packr"
+import (
+	"github.com/gobuffalo/packr"
+)
 
 // Builder is the struct that holds the box on it with all template files.
 type Builder struct {

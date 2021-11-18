@@ -19,8 +19,8 @@ type Template struct {
 	URL  string
 }
 
-func (b *Builder) parseTemplate(file string) ([]byte, error) {
-	tmpl, err := template.New("felix").Parse(file)
+func (b *Builder) parseTemplate(fileName, file string) ([]byte, error) {
+	tmpl, err := template.New(fileName).Parse(file)
 	if err != nil {
 		return nil, err
 	}
