@@ -20,6 +20,7 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/felix-cli/felix/internal/builder"
+	endErrors "github.com/felix-cli/felix/internal/end_errors"
 )
 
 type Context struct {
@@ -61,13 +62,14 @@ func (v *VersionCmd) Run() error {
 }
 
 func (i *InitCmd) Run(ctx *Context) error {
+	endErrorHandler := endErrors.GetInstance()
 	tmp := builder.Template{
 		URL: ctx.TemplateURL,
 	}
 
 	if err := builder.Init(&tmp); err != nil {
-		fmt.Printf("Something went wrong: %s", err.Error())
-
+		endErrorHandler.AddErrorf("running felix init: %s", err.Error())
+		endErrorHandler.PrintErrors()
 		return err
 	}
 	fmt.Println("All done!")
@@ -75,15 +77,17 @@ func (i *InitCmd) Run(ctx *Context) error {
 }
 
 func (n *NewCmd) Run(ctx *Context) error {
+	endErrorHandler := endErrors.GetInstance()
 	tmp := builder.Template{
 		Name: n.Name,
 		URL:  ctx.TemplateURL,
 	}
 
 	if err := builder.Init(&tmp); err != nil {
-		fmt.Printf("Something went wrong: %s", err.Error())
+		endErrorHandler.AddErrorf("running felix new: %s", err.Error())
+		endErrorHandler.PrintErrors()
 
-		return err
+		return nil
 	}
 	fmt.Println("All done!")
 	return nil
