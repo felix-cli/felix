@@ -36,7 +36,7 @@ type NewCmd struct {
 }
 
 var cli struct {
-	Template string `short:"t" help:"github url for the template"`
+	Template string `short:"t" help:"github url for the template" default:"https://github.com/felix-cli/grpc-service.felix"`
 
 	Version VersionCmd `cmd:"" help:"list the latest version"`
 
@@ -63,32 +63,32 @@ func (v *VersionCmd) Run() error {
 
 func (i *InitCmd) Run(ctx *Context) error {
 	endErrorHandler := endErrors.GetInstance()
-	tmp := builder.Template{
-		URL: ctx.TemplateURL,
-	}
+	felix := builder.New(ctx.TemplateURL, "")
 
-	if err := builder.Init(&tmp); err != nil {
+	if err := felix.Fixit(); err != nil {
 		endErrorHandler.AddErrorf("running felix init: %s", err.Error())
 		endErrorHandler.PrintErrors()
 		return err
 	}
+
 	fmt.Println("All done!")
+
 	return nil
 }
 
 func (n *NewCmd) Run(ctx *Context) error {
 	endErrorHandler := endErrors.GetInstance()
-	tmp := builder.Template{
-		Name: n.Name,
-		URL:  ctx.TemplateURL,
-	}
 
-	if err := builder.Init(&tmp); err != nil {
+	felix := builder.New(ctx.TemplateURL, n.Name)
+
+	if err := felix.Fixit(); err != nil {
 		endErrorHandler.AddErrorf("running felix new: %s", err.Error())
 		endErrorHandler.PrintErrors()
 
 		return nil
 	}
+
 	fmt.Println("All done!")
+
 	return nil
 }
